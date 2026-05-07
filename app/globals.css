@@ -28,13 +28,13 @@ body {
 
 /* تأثير احترافي لصور مشاريع شركة RBG */
 .project-card img {
-  filter: grayscale(100%); /* تحويل الصورة للأبيض والأسود */
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); /* حركة ناعمة جداً */
+  filter: grayscale(100%);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .project-card:hover img {
-  filter: grayscale(0%); /* عودة الألوان عند مرور الماوس */
-  transform: scale(1.05); /* تكبير بسيط جداً يعطي إحساساً بالفخامة */
+  filter: grayscale(0%);
+  transform: scale(1.05);
 }
 
 /* حركة ظهور تدريجية للموقع عند الفتح */

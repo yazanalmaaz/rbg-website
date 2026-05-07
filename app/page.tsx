@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 type ProjectFile = {
@@ -24,13 +24,21 @@ const milestones = [
   { label: "Finishing", value: 100 }
 ];
 
+const inputClass =
+  "w-full border border-white/30 bg-black px-3 py-2 text-sm text-white outline-none placeholder:text-white/40 focus:border-white";
+const buttonClass =
+  "border border-white px-4 py-2 text-xs uppercase tracking-[0.2em] transition hover:bg-white hover:text-black";
+
+function getMilestone(progress: number): string {
+  return milestones.find((step) => progress <= step.value)?.label ?? "Finishing";
+}
+
 export default function HomePage() {
   const [projectIdInput, setProjectIdInput] = useState("");
   const [loggedProjectId, setLoggedProjectId] = useState("");
   const [projectData, setProjectData] = useState<ProjectRecord | null>(null);
   const [portalError, setPortalError] = useState("");
   const [adminMessage, setAdminMessage] = useState("");
-  const [clients, setClients] = useState<ProjectRecord[]>([]);
   const [formState, setFormState] = useState({
     projectId: "",
     ownerName: "",
@@ -41,10 +49,7 @@ export default function HomePage() {
 
   const isProjectOwnerAuthenticated = Boolean(projectData);
   const currentProgress = projectData?.status ?? 0;
-
-  const activeMilestone = useMemo(() => {
-    return milestones.find((step) => currentProgress <= step.value)?.label ?? "Finishing";
-  }, [currentProgress]);
+  const activeMilestone = getMilestone(currentProgress);
 
   async function fetchProjectById(projectId: string) {
     const response = await fetch(`/api/projects/${encodeURIComponent(projectId)}`, {
@@ -120,7 +125,6 @@ export default function HomePage() {
       return;
     }
 
-    setClients((prev) => [payload.project!, ...prev.filter((item) => item.projectId !== payload.project!.projectId)]);
     if (loggedProjectId && loggedProjectId === payload.project.projectId) {
       setProjectData(payload.project);
     }
@@ -138,7 +142,7 @@ export default function HomePage() {
           </div>
           <a
             href="#client-portal"
-            className="border border-white px-4 py-2 text-xs uppercase tracking-[0.2em] transition hover:bg-white hover:text-black"
+            className={buttonClass}
           >
             Login
           </a>
@@ -171,9 +175,12 @@ export default function HomePage() {
             Precision in Engineering, Excellence in Execution
           </p>
           <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
-            <button className="border border-white px-8 py-3 text-xs uppercase tracking-[0.2em] transition hover:bg-white hover:text-black">
+            <a
+              href="#client-portal"
+              className="border border-white px-8 py-3 text-xs uppercase tracking-[0.2em] transition hover:bg-white hover:text-black"
+            >
               Client Portal
-            </button>
+            </a>
             <button className="border border-white px-8 py-3 text-xs uppercase tracking-[0.2em] transition hover:bg-white hover:text-black">
               Our Projects
             </button>
@@ -212,7 +219,7 @@ export default function HomePage() {
                 value={projectIdInput}
                 onChange={(event) => setProjectIdInput(event.target.value)}
                 placeholder="Enter Project ID (e.g. RBG-001)"
-                className="w-full border border-white/30 bg-black px-3 py-2 text-sm text-white outline-none placeholder:text-white/40 focus:border-white"
+                className={inputClass}
               />
               <button
                 type="submit"
@@ -279,19 +286,19 @@ export default function HomePage() {
                 value={formState.projectId}
                 onChange={(event) => setFormState((prev) => ({ ...prev, projectId: event.target.value }))}
                 placeholder="Project ID"
-                className="w-full border border-white/30 bg-black px-3 py-2 text-sm text-white outline-none placeholder:text-white/40 focus:border-white"
+                className={inputClass}
               />
               <input
                 value={formState.ownerName}
                 onChange={(event) => setFormState((prev) => ({ ...prev, ownerName: event.target.value }))}
                 placeholder="Name"
-                className="w-full border border-white/30 bg-black px-3 py-2 text-sm text-white outline-none placeholder:text-white/40 focus:border-white"
+                className={inputClass}
               />
               <input
                 value={formState.projectName}
                 onChange={(event) => setFormState((prev) => ({ ...prev, projectName: event.target.value }))}
                 placeholder="Project Name"
-                className="w-full border border-white/30 bg-black px-3 py-2 text-sm text-white outline-none placeholder:text-white/40 focus:border-white"
+                className={inputClass}
               />
               <input
                 type="number"
@@ -302,38 +309,19 @@ export default function HomePage() {
                   setFormState((prev) => ({ ...prev, status: Number(event.target.value || 0) }))
                 }
                 placeholder="Status %"
-                className="w-full border border-white/30 bg-black px-3 py-2 text-sm text-white outline-none placeholder:text-white/40 focus:border-white"
+                className={inputClass}
               />
               <input
                 value={formState.photoUrl}
                 onChange={(event) => setFormState((prev) => ({ ...prev, photoUrl: event.target.value }))}
                 placeholder="Upload Photo (URL)"
-                className="w-full border border-white/30 bg-black px-3 py-2 text-sm text-white outline-none placeholder:text-white/40 focus:border-white"
+                className={inputClass}
               />
-              <button
-                type="submit"
-                className="w-full border border-white px-4 py-2 text-xs uppercase tracking-[0.2em] transition hover:bg-white hover:text-black"
-              >
+              <button type="submit" className="w-full border border-white px-4 py-2 text-xs uppercase tracking-[0.2em] transition hover:bg-white hover:text-black">
                 Add New Client
               </button>
               {adminMessage && <p className="text-xs uppercase tracking-[0.16em] text-white/70">{adminMessage}</p>}
             </form>
-
-            {clients.length > 0 && (
-              <div className="mt-6 border-t border-white/20 pt-4">
-                <h4 className="text-xs uppercase tracking-[0.2em] text-white/70">Recently Added</h4>
-                <ul className="mt-3 space-y-2">
-                  {clients.map((client, index) => (
-                    <li key={`${client.projectId}-${index}`} className="border border-white/20 p-2 text-xs">
-                      <p className="uppercase tracking-[0.1em]">{client.ownerName}</p>
-                      <p className="mt-1 text-white/70">{client.projectName}</p>
-                      <p className="text-white/70">Project ID: {client.projectId}</p>
-                      <p className="text-white/70">Status: {client.status}%</p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </motion.aside>
         </div>
       </section>
@@ -368,14 +356,3 @@ export default function HomePage() {
     </main>
   );
 }
-git init
-
-git add .
-git commit -m "Initial website setup for RBG engineering services"
-git branch -M main
-git remote add origin https://github.com/<YOUR_USERNAME>/<YOUR_REPO>.git
-git push -u origin main
-e:\siite 
-git config --global user.name "Yazan Almaaz"
-git config --global user.email "Yazanalmaaz5@gmail.com"
-
