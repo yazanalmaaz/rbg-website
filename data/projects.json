@@ -1,0 +1,25 @@
+{
+  "projects": [
+    {
+      "projectId": "RBG-001",
+      "ownerName": "Omar Hassan",
+      "projectName": "North Tower Complex",
+      "status": 42,
+      "files": [
+        {
+          "name": "North Tower - Structural Blueprint.pdf",
+          "url": "#"
+        },
+        {
+          "name": "North Tower - Electrical Layout.pdf",
+          "url": "#"
+        }
+      ],
+      "photos": [
+        "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=900&q=80",
+        "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=900&q=80",
+        "https://images.unsplash.com/photo-1429497419816-9ca5cfb4571a?auto=format&fit=crop&w=900&q=80"
+      ]
+    }
+  ]
+}
